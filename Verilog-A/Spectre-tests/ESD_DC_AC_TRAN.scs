@@ -1,0 +1,30 @@
+//======================================================================
+// ESD_DC_AC_TRAN.scs
+//======================================================================
+// Spectre netlist to test the ESD clamp compact model (BESD_1_0_0.va)
+//
+// Version: 1.0.0
+// Tested on: Cadence Spectre version 7.2.0 64bit
+//                        and version 15.1.0 64bit
+//
+// Author: Tianshi Wang [tianshi@berkeley.edu]
+// Last Modified: Mar 5, 2017
+
+simulator lang=spectre
+
+ahdl_include "../models/BESD_1_0_0.va"
+
+saveOptions options save=all
+
+V1 (1 0) vsource dc=0 mag=1 type=pulse val0=0 val1=100 delay=1u rise=4m fall=4m width=1u period=8m+2u
+X1 (1 0) BESD_1_0_0
+
+// DC analysis
+dc1 dc dev=V1 start=0 stop=100 lin=200
+dc2 dc dev=V1 start=100 stop=0 lin=200
+
+// AC analysis
+ac ac start=1k stop=100G dec=20
+
+// transient simulation
+tran tran stop=8m

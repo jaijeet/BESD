@@ -1,0 +1,29 @@
+//======================================================================
+// ESD_TLP_equiv.scs
+//======================================================================
+// Spectre netlist to test the ESD clamp compact model (BESD_1_0_0.va) in
+// a simplified equivalent circuit of transimission line pulse analysis
+//
+// Version: 1.0.0
+// Tested on: Cadence Spectre version 7.2.0 64bit
+//                        and version 15.1.0 64bit
+//
+// Author: Tianshi Wang [tianshi@berkeley.edu]
+// Last Modified: Mar 5, 2017
+
+simulator lang=spectre
+
+ahdl_include "../models/BESD_1_0_0.va"
+
+saveOptions options save=all
+
+V1 (1 0) vsource type=pulse val0=0 val1=50 delay=10n rise=100p fall=100p width=30n period=60n
+R1 (1 2) resistor r=50
+X1 (2 0) BESD_1_0_0
+
+// DC analysis
+dc1 dc dev=V1 start=0 stop=200 lin=400
+dc2 dc dev=V1 start=200 stop=0 lin=400
+
+// transient simulation
+tran tran stop=50n

@@ -1,0 +1,29 @@
+//======================================================================
+// ESD_CDM.scs
+//======================================================================
+// Spectre netlist to test the ESD clamp compact model (BESD_1_0_0.va) under
+// Charged Device Mode
+//
+// Version: 1.0.0
+// Tested on: Cadence Spectre version 7.2.0 64bit
+//                        and version 15.1.0 64bit
+//
+// Author: Tianshi Wang [tianshi@berkeley.edu]
+// Last Modified: Mar 5, 2017
+
+simulator lang=spectre
+
+ahdl_include "../models/BESD_1_0_0.va"
+
+saveOptions options save=all
+
+V1 (1 0) vsource type=pulse val0=0 val1=500 delay=10n rise=100p fall=100p width=30n period=60n
+C1 (1 2) capacitor c=2.5p ic=0
+L1 (2 3) inductor l=20n ic=0
+R1 (3 4) resistor r=30
+X1 (5 4) BESD_1_0_0
+X2 (5 0) BESD_1_0_0
+RL (4 0) resistor r=500
+
+// transient simulation
+tran tran stop=50n

@@ -1,0 +1,39 @@
+`include "disciplines.vams"
+
+module BESD_1_0_0(p, n);
+    inout p, n;
+    electrical p, n, ns;
+
+    parameter real Gon = 0.1 from (0:inf);
+    parameter real VH = 16 from (0:inf);
+    parameter real VT1 = 48 from (0:inf);
+    parameter real VIH = 26 from (0:inf);
+    parameter real Is = 1e-12 from (0:inf);
+    parameter real VT = 0.026 from (0:inf);
+    parameter real VD = 0.7 from (0:inf);
+    parameter real K = 10 from (0:inf);
+    parameter real Alpha = 5 from (0:inf);
+    parameter real C = 1e-12 from [0:inf);
+    parameter real tau = 1e-8 from (0:inf);
+
+    parameter real maxslope = 1e15 from (0:inf);
+    parameter real smoothing = 1e-10 from (0:inf);
+    real s, Ion, Ioff, Vstar, sstar;
+
+    `include "smoothfunctions.va"
+
+    analog begin
+        s = V(ns, n);
+        Ion = smoothclip(Gon*(V(p, n)-VH), smoothing)
+                    - smoothclip(-Gon*VH, smoothing);
+        Ioff = Is * (1 - safeexp(-V(p, n)/VT, maxslope))
+                     * sqrt(1 + max(V(p, n), 0)/VD);
+        I(p, n) <+ Ioff + pow(s, Alpha) * Ion;
+        I(p, n) <+ ddt(C * V(p, n));
+
+        Vstar = 2*(V(p, n)-0.5*VT1-0.5*VIH)/(VT1-VIH);
+        sstar = 2*(s-0.5);
+        I(ns, n) <+ tanh(K*(Vstar + sstar)) - sstar;
+        I(ns, n) <+ ddt(-tau*s);
+    end
+endmodule
