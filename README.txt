@@ -27,7 +27,7 @@ Released on March 4, 2017
 │       └── run_ESD_TLP_equiv_DC_tran_homotopy.m (run analyses on TLP equivalent circuit)
 └── Verilog-A
     ├── models
-    │   ├── ESD_1_0_0.va        (BESD v1.0.0 Verilog-A model)
+    │   ├── BESD_1_0_0.va       (BESD v1.0.0 Verilog-A model)
     │   └── smoothfunctions.va  (smooth function definitions)
     ├── HSPICE-tests
     │   ├── ESD_CDM.sp          (run CDM test in HSPICE)
